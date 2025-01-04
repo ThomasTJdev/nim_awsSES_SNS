@@ -1,0 +1,3 @@
+dev_*
+tests/*
+!tests/*.nim
