@@ -1,3 +1,4 @@
 dev_*
 tests/*
 !tests/*.nim
+!tests/*.nims
