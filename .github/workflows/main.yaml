@@ -1,0 +1,47 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        nimversion: ["binary:1.6.18", "binary:stable"]
+
+    permissions:
+      contents: write
+      packages: write
+
+    runs-on: ubuntu-20.04
+    timeout-minutes: 2
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: iffy/install-nim@v5
+        with:
+          version: ${{ matrix.nimversion }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Print Nim version
+        run: |
+          export PATH=$HOME/.nimble/bin:$PATH
+          nim -v
+
+      - name: Print Nimble version
+        run: |
+          export PATH=$HOME/.nimble/bin:$PATH
+          nimble -v
+
+      - name: Nimble test
+        run: |
+          export PATH=$HOME/.nimble/bin:$PATH
+          nimble test
+
