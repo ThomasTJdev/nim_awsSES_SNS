@@ -35,6 +35,11 @@ the full module `awsSES_SNS` which will import `smtp_ses` as well.
 
 ```nim
 import awsSES_SNS
+
+# Using the sendMailGetReply allows to capture the message ID
+let reply = client.sendMailGetReply(fromAddr, toAddr, msg)
+echo reply
+# => 0101017b7b7b7b7b-7b7b7b7b-324reewsd
 ```
 
 # Email formatting
@@ -104,8 +109,11 @@ router.post("/api/webhooks/incoming/sns", proc(request: Request) =
   resp Http200
 )
 
-router.get("/", proc(request: Request) =
-  echo "OK"
+router.get("/sendmail", proc(request: Request) =
+
+  let messageID = client.sendMailGetReply(fromAddr, toAddr, msg)
+  # Save the messageID for later reference, e.g. for tracking opens and clicks.
+
   resp Http200
 )
 
