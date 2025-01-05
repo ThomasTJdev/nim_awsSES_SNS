@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.0"
+version       = "0.1.1"
 author        = "ThomasTJdev"
 description   = "AWS SES SNS manager"
 license       = "MIT"

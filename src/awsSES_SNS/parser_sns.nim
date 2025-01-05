@@ -30,6 +30,7 @@ type
     Permanent
     Transient
     Undetermined
+    Unknown
 
   BounceSubType* {.pure.} = enum
     General
@@ -41,6 +42,7 @@ type
     AttachmentRejected
     OnAccountSuppressionList
     Undetermined
+    Unknown
 
   ComplaintFeedbackType* = enum
     abuse
@@ -49,6 +51,7 @@ type
     notspam # not-spam
     other
     virus
+    unknown
 
   MailBounce* = ref object
     messageID*: string
@@ -60,8 +63,7 @@ type
 
   MailComplaint* = ref object
     messageID*: string
-    feedbackType*: ComplaintFeedbackType
-    complaintFeedbackType*: string
+    complaintFeedbackType*: ComplaintFeedbackType
     arrivalDate*: string
     email*: string
 
@@ -104,7 +106,7 @@ proc snsParseEventType*(jsonBody: JsonNode): EventType =
   ## The event type. Either a normal mail event, or the subscription confirmation
   ## call from SNS.
   if jsonBody.hasKey("eventType"):
-    return parseEnum[EventType](jsonBody["eventType"].getStr(), Unknown)
+    return parseEnum[EventType](jsonBody["eventType"].getStr(), EventType.Unknown)
 
   elif jsonBody.hasKey("Type") and jsonBody["Type"].getStr() == "SubscriptionConfirmation":
     return EventType.SNSSubscriptionConfirmation
@@ -120,8 +122,8 @@ proc snsParseBounce*(jsonBody: JsonNode): seq[MailBounce] =
   for recipient in bouncedRecipients:
     result.add MailBounce(
       messageID: jsonBody["mail"]["messageId"].getStr(),
-      bounceType: parseEnum[BounceType](bounce["bounceType"].getStr()),
-      bounceSubType: parseEnum[BounceSubType](bounce["bounceSubType"].getStr()),
+      bounceType: parseEnum[BounceType](bounce["bounceType"].getStr(), BounceType.Unknown),
+      bounceSubType: parseEnum[BounceSubType](bounce["bounceSubType"].getStr(), BounceSubType.Unknown),
       email: recipient["emailAddress"].getStr(),
       status: recipient["status"].getStr(),
       diagnosticCode: recipient["diagnosticCode"].getStr()
@@ -136,8 +138,7 @@ proc snsParseComplaint*(jsonBody: JsonNode): seq[MailComplaint] =
   for recipient in complainedRecipients:
     result.add MailComplaint(
       messageID: jsonBody["mail"]["messageId"].getStr(),
-      feedbackType: parseEnum[ComplaintFeedbackType](complaint["complaintFeedbackType"].getStr()),
-      complaintFeedbackType: complaint["complaintFeedbackType"].getStr(),
+      complaintFeedbackType: parseEnum[ComplaintFeedbackType](complaint["complaintFeedbackType"].getStr(), unknown),
       arrivalDate: complaint["arrivalDate"].getStr(),
       email: recipient["emailAddress"].getStr()
     )

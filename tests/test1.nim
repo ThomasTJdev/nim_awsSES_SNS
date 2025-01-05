@@ -44,7 +44,7 @@ test "complaint me":
   check(complaints.len == 1)
   check(complaints[0].messageID == "EXAMPLE7c191be45-e9aedb9a-02f9-4d12-a87d-dd0099a07f8a-000000")
   check(complaints[0].email == "recipient@example.com")
-  check(complaints[0].complaintFeedbackType == "abuse")
+  check(complaints[0].complaintFeedbackType == ComplaintFeedbackType.abuse)
   check(complaints[0].arrivalDate == "2017-08-05T00:41:02.669Z")
 
 
