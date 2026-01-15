@@ -88,15 +88,24 @@ router.post("/api/webhooks/incoming/sns", proc(request: Request) =
 
   of Complaint:
     let mailComplaint = snsParseComplaint(snsMsg)
+    if not mailComplaint.parsingSucceeded:
+      echo "Error parsing complaint"
+      resp Http400
     for mail in mailComplaint:
       echo mail.email & " - " & $mail.feedbackType & " - " & mail.messageID
 
   of Delivery:
     let mailDelivery = snsParseDelivery(snsMsg)
+    if not mailDelivery.parsingSucceeded:
+      echo "Error parsing delivery"
+      resp Http400
     echo $mailDelivery.email & " - " & mailDelivery.messageID
 
   of Open:
     let mailOpen = snsParseOpen(snsMsg)
+    if not mailOpen.parsingSucceeded:
+      echo "Error parsing open"
+      resp Http400
     echo mailOpen.ipAddress & " - " & mailOpen.timestamp & " - " & mailOpen.messageID
 
   of Click:
